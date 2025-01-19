@@ -36,7 +36,12 @@ entity mux is
            IN2 : in STD_LOGIC;
            IN3 : in STD_LOGIC;
            IN4 : in STD_LOGIC;
-           Selector : in STD_LOGIC_VECTOR (1 downto 0);
+           IN5 : in STD_LOGIC;
+           IN6 : in STD_LOGIC;
+           IN7 : in STD_LOGIC;
+           IN8 : in STD_LOGIC;
+
+           Selector : in STD_LOGIC_VECTOR (2 downto 0);
            RES : out STD_LOGIC);
 end mux;
 
@@ -44,13 +49,18 @@ architecture Behavioral of mux is
 
 begin
 
-process (Selector,IN1,IN2,IN3,IN4)
+process (Selector,IN1,IN2,IN3,IN4,
+         IN5,IN6,IN7,IN8)
 begin
    case Selector is
-      when "00" => RES <= IN1;
-      when "01" => RES <= IN2;
-      when "10" => RES <= IN3;
-      when "11" => RES <= IN4;
+      when "000" => RES <= IN1;
+      when "001" => RES <= IN2;
+      when "010" => RES <= IN3;
+      when "011" => RES <= IN4;
+      when "100" => RES <= IN5;
+      when "101" => RES <= IN6;
+      when "110" => RES <= IN7;
+      when "111" => RES <= IN8;
       when others => RES <= IN1;
    end case;
 end process;
