@@ -24,7 +24,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.std_logic_unsigned.all;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -57,6 +58,17 @@ begin
      end if;
 end process;
 
-end Behavioral;
+process (CLOCK)
+begin
+    if CLOCK = '1' and CLOCK'event then
+        if RESET = '1' then 
+            ALARM <= '0';
+        elsif count = 500 then  
+            ALARM <= '1';
+        else 
+            ALARM <= '0';
+        end if;
+    end if;
+end process;
 
-f
+end Behavioral;
