@@ -47,7 +47,7 @@ begin
 
 process (CLOCK) 
 begin
-    if CLOCK = '1' and CLOCK'event then
+    if rising_edge(CLOCK) then
         if (RESET = '1') or (RAD = '0') then  
             count <= (others => '0');
         elsif count < 500 then  
