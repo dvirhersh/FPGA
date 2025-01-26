@@ -44,17 +44,15 @@ architecture Behavioral of DEMO_COUNTER is
 signal COUNT : STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
 
 begin
-
-process (CLOCK)
-begin
-   if CLOCK='1' and CLOCK'event then
-      if RESET='1' then
-         COUNT <= (others => '0');
-      elsif CE='1' then
-         COUNT <= COUNT + 1;
+   process (CLOCK) begin
+      if CLOCK='1' and CLOCK'event then
+         if RESET='1' then
+            COUNT <= (others => '0');
+         elsif CE='1' then
+            COUNT <= COUNT + 1;
+         end if;
       end if;
-   end if;
-end process;
+   end process;
 
 COUNTER <= COUNT;
 

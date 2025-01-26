@@ -18,7 +18,6 @@
 -- 
 ----------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -41,17 +40,16 @@ architecture Behavioral of reset_bridge is
 
 begin
 
-    process (clk_dst, rst_in)
-       variable rst_meta : std_logic  := 'U';
+    process (clk_dst,rst_in)
+       variable rst_meta : std_logic := 'U';
     begin
-        if rst_in='1' then
+        if rst_in = '1' then
             rst_meta := '1';
-            rst_out  <= '1';
+            rst_out <= '1';
         elsif (rising_edge (clk_dst)) then
             rst_out  <= rst_meta;
             rst_meta := '0';
         end if;
     end process;
-		
 
 end Behavioral;

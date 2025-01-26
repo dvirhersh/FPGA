@@ -56,7 +56,7 @@ end component;
 
 signal Channel_1_registered_data : std_logic_vector (7 downto 0);
 signal Channel_2_registered_data : std_logic_vector (7 downto 0);
-signal mux_data_selected : std_logic_vector (7 downto 0);
+signal mux_data_selected : std_logic_vector (7 downto 0); -- combinational output of multiplexer
 
 
 begin
