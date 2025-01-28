@@ -21,7 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.all;
+use IEEE.STD_LOGIC_UNSIGNED.ALL; -- vhdl-linter-disable-line not-declared
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -38,12 +38,12 @@ end REG8_tb;
 
 architecture Behavioral of REG8_tb is
 
-    component REG8 is
-        Port ( CLK : in STD_LOGIC;
-               DIN : in STD_LOGIC_VECTOR (7 downto 0);
-               RST : in STD_LOGIC;
-               DOUT : out STD_LOGIC_VECTOR (7 downto 0);
-               CE : in STD_LOGIC
+    component register8 is
+        Port ( clock : in STD_LOGIC;
+               data_in : in STD_LOGIC_VECTOR (7 downto 0);
+               reset : in STD_LOGIC;
+               data_out : out STD_LOGIC_VECTOR (7 downto 0);
+               enable : in STD_LOGIC
                );
     end component;
 
@@ -57,12 +57,12 @@ architecture Behavioral of REG8_tb is
 
 begin
 
-    dut: REG8 port map ( 
-                CLK  => CLK_sig,
-                DIN  => DIN_sig,
-                RST  => RST_sig,
-                DOUT => DOUT_sig,
-                CE   => CE_sig
+    dut: register8 port map ( 
+                clock   => CLK_sig,
+                data_in  => DIN_sig,
+                reset    => RST_sig,
+                data_out => DOUT_sig,
+                enable   => CE_sig
                );
 
     -- reset generation
@@ -72,5 +72,8 @@ begin
     CLK_sig <= not CLK_sig after 5 ns;
     
     CE_sig <= '1';
+    
+    DIN_sig <= "10010101" after clock_period * 15, "11010001" after clock_period * 20;
+    
 
 end Behavioral;
