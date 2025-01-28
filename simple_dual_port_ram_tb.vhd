@@ -53,7 +53,7 @@ architecture Behavioral of simple_dual_port_ram_tb is
     --in
     signal clka      :  STD_LOGIC := '0';
     signal wea       :  STD_LOGIC_VECTOR(0 DOWNTO 0) := (others => '0');
-    signal addra_sig :  STD_LOGIC_VECTOR(8 DOWNTO 0) := (others => '0');
+    signal addra_sig :  STD_LOGIC_VECTOR(8 DOWNTO 0) := (others => '1');
     signal dina      :  STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
     signal clkb      :  STD_LOGIC := '0';
     signal addrb     :  STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
@@ -68,7 +68,7 @@ begin
      process (clka) begin 
         if rising_edge (clka) then
             wea(0) <= not addra_sig(8);
-            addra_sig <= addra_sig + '1';
+            addra_sig <= addra_sig + 1;
             dina <= '0' & addra_sig(7 downto 0) & '0'; -- multiply by 2
     --        wait for 10 ns;
         end if;
