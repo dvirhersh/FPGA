@@ -1,3 +1,4 @@
+-- vhdl-linter-disable not-declared type-resolved
 ----------------------------------------------------------------------------------
 -- Company: 
 -- Engineer: 
@@ -34,7 +35,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity counter_for_rom_address is
     Port ( CLK : in STD_LOGIC;
            RST : in STD_LOGIC;
-           DATA : out STD_LOGIC_VECTOR (7 downto 0));
+           DOUT : out STD_LOGIC_VECTOR (7 downto 0));
 end counter_for_rom_address;
 
 architecture Behavioral of counter_for_rom_address is
@@ -47,16 +48,16 @@ architecture Behavioral of counter_for_rom_address is
         );
     end component;
 
-    signal count    : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
-    signal rom_data : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    signal count_to_addra : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '1');
+    signal dout_sig       : STD_LOGIC_VECTOR(7 DOWNTO 0);
 begin
 
     process (CLK) begin
         if rising_edge (CLK) then
             if RST = '1' then
-                count <= (others => '0');
+                count_to_addra <= (others => '1');
             else
-                count <= count + 1;
+                count_to_addra <= count_to_addra + 1;
             end if;
         end if;
     end process;
@@ -64,10 +65,10 @@ begin
     uut : blk_mem_gen_0
         port map (
         clka  => CLK,
-        addra => count,
-        douta => rom_data
+        addra => count_to_addra,
+        douta => dout_sig
         );
 
-DATA <= rom_data;
+DOUT <= dout_sig;
 
 end Behavioral;

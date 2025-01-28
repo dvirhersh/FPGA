@@ -1,3 +1,4 @@
+-- vhdl-linter-disable not-declared type-resolved
 ----------------------------------------------------------------------------------
 -- Company: 
 -- Engineer: 
@@ -56,7 +57,6 @@ architecture Behavioral of simple_dual_port_ram_tb is
     signal addra_sig :  STD_LOGIC_VECTOR(8 DOWNTO 0) := (others => '1');
     signal dina      :  STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
     signal clkb      :  STD_LOGIC := '0';
-    signal addrb     :  STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
     --out
     signal doutb     : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
 
