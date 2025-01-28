@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 01/23/2025 07:15:57 PM
+-- Create Date: 01/27/2025 04:19:00 PM
 -- Design Name: 
--- Module Name: tb_blk_mem_gen_0 - Behavioral
+-- Module Name: counter_for_rom_address - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -18,10 +18,9 @@
 -- 
 ----------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.std_logic_unsigned.ALL;
+use IEEE.std_logic_unsigned.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -32,11 +31,13 @@ use IEEE.NUMERIC_STD.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity tb_blk_mem_gen_0 is
---  Port ( );
-end tb_blk_mem_gen_0;
+entity counter_for_rom_address is
+    Port ( CLK : in STD_LOGIC;
+           RST : in STD_LOGIC;
+           DATA : out STD_LOGIC_VECTOR (7 downto 0));
+end counter_for_rom_address;
 
-architecture Behavioral of tb_blk_mem_gen_0 is
+architecture Behavioral of counter_for_rom_address is
 
     component blk_mem_gen_0
         port(
@@ -46,25 +47,27 @@ architecture Behavioral of tb_blk_mem_gen_0 is
         );
     end component;
 
-    --in
-    signal clka  : STD_LOGIC := '0';
-    signal addra : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '1');
-    --out
-    signal douta : STD_LOGIC_VECTOR(7 DOWNTO 0);
-
+    signal count    : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
+    signal rom_data : STD_LOGIC_VECTOR(7 DOWNTO 0);
 begin
-     clka <= not (clka) after 5 ns ;
-     
-     process begin 
-        addra <= addra + '1';
-        wait for 10 ns;
-     end process;
 
+    process (CLK) begin
+        if rising_edge (CLK) then
+            if RST = '1' then
+                count <= (others => '0');
+            else
+                count <= count + 1;
+            end if;
+        end if;
+    end process;
+    
     uut : blk_mem_gen_0
         port map (
-        clka  => clka,
-        addra =>  addra,
-        douta => douta
+        clka  => CLK,
+        addra => count,
+        douta => rom_data
         );
+
+DATA <= rom_data;
 
 end Behavioral;

@@ -1,3 +1,4 @@
+-- vhdl-linter-disable type-resolved
 ----------------------------------------------------------------------------------
 -- Company: 
 -- Engineer: 
@@ -21,10 +22,10 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.std_logic_unsigned.all;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
-use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -70,13 +71,13 @@ begin
 -- Instantiate the Unit Under Test (UUT)
     uut: LED_manager PORT MAP (
         Channel_1_data   => Channel_1_data,
-        Channel_2_data   =>  Channel_2_data,
-        Channel_1_enable =>  Channel_1_enable,
-        Channel_2_enable =>  Channel_2_enable,
-        Selector         =>  Selector,
-        clock            =>  clock,
-        reset            =>  reset,
-        data_out         =>  data_out
+        Channel_2_data   => Channel_2_data,
+        Channel_1_enable => Channel_1_enable,
+        Channel_2_enable => Channel_2_enable,
+        Selector         => Selector,
+        clock            => clock,
+        reset            => reset,
+        data_out         => data_out
     );
     
     -- reset generation
