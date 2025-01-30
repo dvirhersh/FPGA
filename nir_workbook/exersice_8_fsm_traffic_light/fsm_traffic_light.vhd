@@ -63,7 +63,7 @@ begin
         if rising_edge (CLK) then
             if RST = '1' then
                 count <= (others => '0');
-            elsif count = 2400 then
+            elsif count = MAX_COUNT then
                 count <= (others => '0');
             else 
                 count <= count + 1;

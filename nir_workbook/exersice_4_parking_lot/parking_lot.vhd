@@ -43,21 +43,16 @@ end parking_lot;
 
 architecture Behavioral of parking_lot is
     
+    constant max_capacity : integer := 1000;
+    
     -- for sync
     signal CI_in_meta, CO_in_meta, CI_in_sync, CO_in_sync : std_logic := '0';
+
     -- counter
-    signal previous_ci, previous_co : std_logic                    := '0';
+    signal previous_ci, previous_co : std_logic := '0';
     signal counter                  : STD_LOGIC_VECTOR (9 downto 0):= (others => '0');
-    signal reset_sync               : std_logic_vector(1 downto 0) := (others => '1');
 
 begin
-
-    -- Synchronize reset
-    process(CLOCK) begin
-        if rising_edge(CLOCK) then
-            reset_sync <= reset_sync(0) & RESET;
-        end if;
-    end process;
 
     -- Synchronize inputs
     process (CLOCK) begin
@@ -72,17 +67,20 @@ begin
     -- counter
     process (CLOCK) begin
         if rising_edge (CLOCK) then
-            if reset_sync(1) = '1' then
+            if RESET = '1' then
                 counter     <= (others => '0');
                 previous_co <= '0';
                 previous_ci <= '0';
             else
                 previous_ci <= CI_in_sync;
                 previous_co <= CO_in_sync;
-                -- using rising edge detector
-                if CI_in_sync = '1' and previous_ci = '0' and counter < 1000 then
+                
+                -- Car entering - using rising edge detector on CI
+                if CI_in_sync = '1' and previous_ci = '0' and counter < max_capacity then
                     counter <= counter + 1;
                 end if;
+                
+                -- Car exiting (rising edge on CO)
                 if CO_in_sync = '1' and previous_co = '0' and counter > 0 then
                     counter <= counter - 1;
                 end if;
@@ -91,6 +89,6 @@ begin
     end process;
     
     PS <= counter;
-    Enable <= '1' when counter < 1000 else '0';
+    Enable <= '1' when counter < max_capacity else '0';
 
 end Behavioral;
