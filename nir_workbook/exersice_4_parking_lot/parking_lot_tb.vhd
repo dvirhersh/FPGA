@@ -80,7 +80,7 @@ begin
             wait for CLOCK_period * 5;
         end loop;
 
-        -- Test car leaving (fiction situation)
+        -- Test car leaving (unreal situation)
         for i in 1 to 10 loop
             CO <= '1';
             wait for CLOCK_period * 2;
