@@ -101,26 +101,24 @@ begin
     
     -- DELAY process
     
-    process (CLK) begin
-        if rising_edge (CLK) then
-            if counter < COLLECTION_TIME then
-                addra  <= douta;
-                addrb  <= douta;
-                wea(0) <= counter(0);
-                dina   <= doutb_sig + 1;
-                hist_ready_int <= '0';
-            elsif counter <= PRESENTATION_TIME then
-                wea(0) <= '0';
-                -- addrb  <= counter - COLLECTION_TIME;
-                addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - COLLECTION_TIME), 8));
-                hist_ready_int <= '1';
-            else
-                wea(0) <= '1';
-                dina   <= (others => '0');
-                -- addra  <= counter - PRESENTATION_TIME;
-                addra  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - PRESENTATION_TIME), 8));
-                hist_ready_int <= '0';
-            end if;
+    process (counter, douta, doutb_sig) begin
+        if counter < COLLECTION_TIME then
+            addra  <= douta;
+            addrb  <= douta;
+            wea(0) <= counter(0);
+            dina   <= doutb_sig + 1;
+            hist_ready_int <= '0';
+        elsif counter <= PRESENTATION_TIME then
+            wea(0) <= '0';
+            -- addrb  <= counter - COLLECTION_TIME;
+            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - COLLECTION_TIME), 8));
+            hist_ready_int <= '1';
+        else
+            wea(0) <= '1';
+            dina   <= (others => '0');
+            -- addra  <= counter - PRESENTATION_TIME;
+            addra  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - PRESENTATION_TIME), 8));
+            hist_ready_int <= '0';
         end if;
     end process;
 
