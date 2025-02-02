@@ -67,7 +67,7 @@ architecture Behavioral of HIST_UNIT is
       );
     END COMPONENT;
     
-    signal counter : std_logic_vector (11 downto 0) := (others => '0');
+    signal counter : std_logic_vector (11 downto 0) := (others => '1');
     
     -- For ROM
     -- out
@@ -76,9 +76,9 @@ architecture Behavioral of HIST_UNIT is
     -- For Singal Dual Port RAM
     -- in 
     signal wea   : STD_LOGIC_VECTOR(0 DOWNTO 0) := (others => '0');
-    signal addra : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '1');
+    signal addra : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
     signal dina  : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
-    signal addrb : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '1');
+    signal addrb : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
     -- out
     signal doutb_sig : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
 
@@ -90,7 +90,7 @@ begin
     process (CLK) begin
         if rising_edge (CLK) then
             if RST = '1' then
-                counter <= (others => '0');
+                counter <= (0 => '1', others => '1');
             elsif counter < MAX_COUNTER then
                 counter <= counter + 1;
             else
