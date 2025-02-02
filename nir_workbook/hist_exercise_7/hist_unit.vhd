@@ -71,7 +71,7 @@ architecture Behavioral of HIST_UNIT is
     
     -- For ROM
     -- out
-    signal douta : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    signal douta : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
 
     -- For Singal Dual Port RAM
     -- in 
@@ -92,7 +92,7 @@ begin
             if RST = '1' then
                 counter <= (others => '0');
             elsif counter < MAX_COUNTER then
-                counter <= counter + '1';
+                counter <= counter + 1;
             else
                 counter <= (others => '0');
             end if;
@@ -101,31 +101,31 @@ begin
     
     -- DELAY process
     
---    process (CLK) begin
---        if rising_edge (CLK) then
---            if count < COLLECTION_TIME then
---                addra  <= douta;
---                addrb  <= douta;
---                wea(0) <= count(0);
---                dina   <= doutb + 1;
---                hist_ready_int <= '0';
---            elsif count < PRESENTATION_TIME then
---                wea(0) <= '0';
---                addrb  <= count - COLLECTION_TIME;
---                hist_ready_int <= '1';
---            else
---                wea(0) <= '0';
---                dina   <= (others => '0');
---                addra  <= count - PRESENTATION_TIME;
---                hist_ready_int <= '0';
---            end if;
---        end if;
---    end process;
+    process (counter) begin
+        if counter < COLLECTION_TIME then
+            addra  <= douta;
+            addrb  <= douta;
+            wea(0) <= counter(0);
+            dina   <= doutb + 1;
+            hist_ready_int <= '0';
+        elsif counter < PRESENTATION_TIME then
+            wea(0) <= '0';
+            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - COLLECTION_TIME), 8));
+--            addrb  <= counter - COLLECTION_TIME;
+            hist_ready_int <= '1';
+        else
+            wea(0) <= '0';
+            dina   <= (others => '0');
+            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - PRESENTATION_TIME), 8));
+--            addra  <= counter - PRESENTATION_TIME;
+            hist_ready_int <= '0';
+        end if;
+    end process;
 
---   -- Output assignments
---    HIST_READY   <= hist_ready_int;
---    HIST_VALUE   <= addrb;
---    VALUE_AMOUNT <= doutb;
+   -- Output assignments
+    HIST_READY   <= hist_ready_int;
+    HIST_VALUE   <= addrb;
+    VALUE_AMOUNT <= doutb;
     
     ROM : blk_mem_gen_0
       PORT MAP (
