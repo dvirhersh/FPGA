@@ -49,20 +49,20 @@ architecture Behavioral of mux is
 
 begin
 
-process (Selector,IN1,IN2,IN3,IN4,
-         IN5,IN6,IN7,IN8)
-begin
-   case Selector is
-      when "000" => RES <= IN1;
-      when "001" => RES <= IN2;
-      when "010" => RES <= IN3;
-      when "011" => RES <= IN4;
-      when "100" => RES <= IN5;
-      when "101" => RES <= IN6;
-      when "110" => RES <= IN7;
-      when "111" => RES <= IN8;
-      when others => RES <= IN1;
-   end case;
-end process;
+   process (Selector,IN1,IN2,IN3,IN4,
+            IN5,IN6,IN7,IN8)
+   begin
+      case Selector is
+         when "000" => RES <= IN1;
+         when "001" => RES <= IN2;
+         when "010" => RES <= IN3;
+         when "011" => RES <= IN4;
+         when "100" => RES <= IN5;
+         when "101" => RES <= IN6;
+         when "110" => RES <= IN7;
+         when "111" => RES <= IN8;
+         when others => RES <= IN1;
+      end case;
+   end process;
 
 end Behavioral;
