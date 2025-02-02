@@ -68,6 +68,8 @@ architecture Behavioral of HIST_UNIT is
     END COMPONENT;
     
     signal counter : std_logic_vector (11 downto 0) := (others => '1');
+    signal counter_delayed : std_logic_vector (11 downto 0) := (others => '1');
+    signal counter_delayed_b : std_logic_vector (11 downto 0) := (others => '1');
     
     -- For ROM
     -- out
@@ -90,7 +92,7 @@ begin
     process (CLK) begin
         if rising_edge (CLK) then
             if RST = '1' then
-                counter <= (0 => '1', others => '1');
+                counter <= (others => '1');
             elsif counter < MAX_COUNTER then
                 counter <= counter + 1;
             else
@@ -99,31 +101,40 @@ begin
         end if;
     end process;
     
-    -- DELAY process
+    -- Counter DELAY process
+    process (CLK) begin
+        counter_delayed_b <= counter;
+        counter_delayed <= counter_delayed_b;       
+    end process; 
     
-    process (counter, douta, doutb_sig) begin
-        if counter < COLLECTION_TIME then
+    -- HIST_VALUE delay process
+    process (CLK) begin
+        HIST_READY <= hist_ready_int;     
+    end process;
+    
+    process (counter_delayed, douta, doutb_sig) begin
+        if counter_delayed < COLLECTION_TIME then
             addra  <= douta;
             addrb  <= douta;
-            wea(0) <= counter(0);
+            wea(0) <= counter_delayed(0);
             dina   <= doutb_sig + 1;
             hist_ready_int <= '0';
-        elsif counter <= PRESENTATION_TIME then
+        elsif counter_delayed <= PRESENTATION_TIME then
             wea(0) <= '0';
             -- addrb  <= counter - COLLECTION_TIME;
-            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - COLLECTION_TIME), 8));
+            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter_delayed)) - COLLECTION_TIME), 8));
             hist_ready_int <= '1';
         else
             wea(0) <= '1';
             dina   <= (others => '0');
             -- addra  <= counter - PRESENTATION_TIME;
-            addra  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - PRESENTATION_TIME), 8));
+            addra  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter_delayed)) - PRESENTATION_TIME), 8));
             hist_ready_int <= '0';
         end if;
     end process;
 
    -- Output assignments
-    HIST_READY   <= hist_ready_int;
+
     HIST_VALUE   <= addrb;
     VALUE_AMOUNT <= doutb_sig;
     
