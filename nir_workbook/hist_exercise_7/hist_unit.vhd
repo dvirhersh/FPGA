@@ -21,7 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.std_logic_unsigned.ALL; 
+use IEEE.std_logic_unsigned.ALL;  -- vhdl-linter-disable-line not-declared
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -67,7 +67,7 @@ architecture Behavioral of HIST_UNIT is
       );
     END COMPONENT;
     
-    signal count : std_logic_vector (10 downto 0) := (others => '0');
+    signal counter : std_logic_vector (10 downto 0) := (others => '0');
     
     -- For ROM
     -- out
@@ -90,45 +90,51 @@ begin
     process (CLK) begin
         if rising_edge (CLK) then
             if RST = '1' then
-                count <= (others => '0');
-            elsif count < MAX_COUNTER then
-                count <= count + 1;
+                counter <= (others => '0');
+                report "1 Reset: Counter set to 0";
+--            elsif counter < 2558 then
             else
-                count <= (others => '0');
+                counter <= counter + '1';
+                report "2 Increment: Counter";
+--            else
+--                counter <= (others => '0');
+--                report "3 Max reached: Counter reset to 0";
             end if;
         end if;
     end process;
     
-    -- MUX
+    -- DELAY process
     
-    -- DELAY
-    
-    -- 
-    process (count) begin
-        if count < COLLECTION_TIME then
-            addra  <= douta;
-            addrb  <= douta;
-            wea(0) <= count(0);
-            dina   <= doutb + 1;
-        elsif count < PRESENTATION_TIME then
-            wea(0) <= '0';
-            addrb  <= count - COLLECTION_TIME;
-        else
-            wea(0) <= '0';
-            dina   <= (others => '0');
-            addra  <= count - PRESENTATION_TIME;
-        end if;
-    end process;
+--    process (CLK) begin
+--        if rising_edge (CLK) then
+--            if count < COLLECTION_TIME then
+--                addra  <= douta;
+--                addrb  <= douta;
+--                wea(0) <= count(0);
+--                dina   <= doutb + 1;
+--                hist_ready_int <= '0';
+--            elsif count < PRESENTATION_TIME then
+--                wea(0) <= '0';
+--                addrb  <= count - COLLECTION_TIME;
+--                hist_ready_int <= '1';
+--            else
+--                wea(0) <= '0';
+--                dina   <= (others => '0');
+--                addra  <= count - PRESENTATION_TIME;
+--                hist_ready_int <= '0';
+--            end if;
+--        end if;
+--    end process;
 
-   -- Output assignments
-    HIST_READY   <= hist_ready_int;
-    HIST_VALUE   <= addrb;
-    VALUE_AMOUNT <= doutb;
+--   -- Output assignments
+--    HIST_READY   <= hist_ready_int;
+--    HIST_VALUE   <= addrb;
+--    VALUE_AMOUNT <= doutb;
     
     ROM : blk_mem_gen_0
       PORT MAP (
         clka  => CLK,
-        addra => count(10 downto 1),
+        addra => counter(10 downto 1),
         douta => douta
       );
     
