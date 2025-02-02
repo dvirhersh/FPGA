@@ -76,11 +76,11 @@ architecture Behavioral of HIST_UNIT is
     -- For Singal Dual Port RAM
     -- in 
     signal wea   : STD_LOGIC_VECTOR(0 DOWNTO 0) := (others => '0');
-    signal addra : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
+    signal addra : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '1');
     signal dina  : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
-    signal addrb : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
+    signal addrb : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '1');
     -- out
-    signal doutb : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
+    signal doutb_sig : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
 
     signal hist_ready_int : std_logic := '0';
 
@@ -101,31 +101,33 @@ begin
     
     -- DELAY process
     
-    process (counter) begin
-        if counter < COLLECTION_TIME then
-            addra  <= douta;
-            addrb  <= douta;
-            wea(0) <= counter(0);
-            dina   <= doutb + 1;
-            hist_ready_int <= '0';
-        elsif counter < PRESENTATION_TIME then
-            wea(0) <= '0';
-            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - COLLECTION_TIME), 8));
---            addrb  <= counter - COLLECTION_TIME;
-            hist_ready_int <= '1';
-        else
-            wea(0) <= '0';
-            dina   <= (others => '0');
-            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - PRESENTATION_TIME), 8));
---            addra  <= counter - PRESENTATION_TIME;
-            hist_ready_int <= '0';
+    process (CLK) begin
+        if rising_edge (CLK) then
+            if counter < COLLECTION_TIME then
+                addra  <= douta;
+                addrb  <= douta;
+                wea(0) <= counter(0);
+                dina   <= doutb_sig + 1;
+                hist_ready_int <= '0';
+            elsif counter <= PRESENTATION_TIME then
+                wea(0) <= '0';
+                -- addrb  <= counter - COLLECTION_TIME;
+                addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - COLLECTION_TIME), 8));
+                hist_ready_int <= '1';
+            else
+                wea(0) <= '1';
+                dina   <= (others => '0');
+                -- addra  <= counter - PRESENTATION_TIME;
+                addra  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - PRESENTATION_TIME), 8));
+                hist_ready_int <= '0';
+            end if;
         end if;
     end process;
 
    -- Output assignments
     HIST_READY   <= hist_ready_int;
     HIST_VALUE   <= addrb;
-    VALUE_AMOUNT <= doutb;
+    VALUE_AMOUNT <= doutb_sig;
     
     ROM : blk_mem_gen_0
       PORT MAP (
@@ -142,7 +144,7 @@ begin
         dina  => dina,
         clkb  => CLK,
         addrb => addrb,
-        doutb => doutb
+        doutb => doutb_sig
       );
 
 end Behavioral;
