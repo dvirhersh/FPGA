@@ -67,7 +67,7 @@ architecture Behavioral of HIST_UNIT is
       );
     END COMPONENT;
     
-    signal counter : std_logic_vector (10 downto 0) := (others => '0');
+    signal counter : std_logic_vector (11 downto 0) := (others => '0');
     
     -- For ROM
     -- out
@@ -91,14 +91,10 @@ begin
         if rising_edge (CLK) then
             if RST = '1' then
                 counter <= (others => '0');
-                report "1 Reset: Counter set to 0";
---            elsif counter < 2558 then
-            else
+            elsif counter < MAX_COUNTER then
                 counter <= counter + '1';
-                report "2 Increment: Counter";
---            else
---                counter <= (others => '0');
---                report "3 Max reached: Counter reset to 0";
+            else
+                counter <= (others => '0');
             end if;
         end if;
     end process;
