@@ -39,7 +39,7 @@ end simple_dual_port_ram_tb;
 
 architecture Behavioral of simple_dual_port_ram_tb is
 
-    COMPONENT blk_mem_gen_1
+    COMPONENT blk_mem_gen_1 -- vhdl-linter-disable-line component
       PORT (
         clka  : IN STD_LOGIC; -- 100MHz
         wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
@@ -58,7 +58,7 @@ architecture Behavioral of simple_dual_port_ram_tb is
     signal dina      :  STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
     signal clkb      :  STD_LOGIC := '0';
     --out
-    signal doutb     : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
+    signal doutb_unused     : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
 
 begin
 
@@ -82,7 +82,7 @@ begin
             dina  => dina,
             clkb  => clkb,
             addrb => addra_sig(7 downto 0),
-            doutb => doutb
+            doutb => doutb_unused
             );
 
 end Behavioral;

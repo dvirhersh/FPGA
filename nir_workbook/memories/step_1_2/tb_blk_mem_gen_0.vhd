@@ -1,3 +1,4 @@
+-- vhdl-linter-disable type-resolved
 ----------------------------------------------------------------------------------
 -- Company: 
 -- Engineer: 
@@ -21,7 +22,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.std_logic_unsigned.ALL;
+use IEEE.std_logic_unsigned.ALL; -- vhdl-linter-disable-line not-declared
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values

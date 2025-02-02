@@ -48,7 +48,7 @@ architecture Behavioral of counter_for_rom_address_tb is
     signal CLK : std_logic := '0';
     signal RST : std_logic := '0';
     --out
-    signal DOUT : STD_LOGIC_VECTOR (7 downto 0);
+    signal DOUT_unused : STD_LOGIC_VECTOR (7 downto 0);
     
     constant CLK_PERIOD : time := 10 ns;
     
@@ -57,7 +57,7 @@ begin
     uut: counter_for_rom_address port map (
         CLK => CLK,
         RST => RST,
-        DOUT => DOUT
+        DOUT => DOUT_unused
     );
     
     -- RST and CLK generation
