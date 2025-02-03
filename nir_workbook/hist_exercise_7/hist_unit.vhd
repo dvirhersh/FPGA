@@ -72,19 +72,16 @@ architecture Behavioral of HIST_UNIT is
     signal counter_delayed_b : std_logic_vector (11 downto 0) := (others => '1');
     
     -- For ROM
-    -- out
     signal douta : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
 
     -- For Singal Dual Port RAM
-    -- in 
     signal wea   : STD_LOGIC_VECTOR(0 DOWNTO 0) := (others => '0');
     signal addra : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
     signal dina  : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
     signal addrb : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
-    -- out
     signal doutb_sig : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
 
-    signal hist_ready_int : std_logic := '0';
+    signal hist_ready_int : STD_LOGIC_VECTOR(2 DOWNTO 0) := (others => '0');
 
 begin
 
@@ -109,32 +106,33 @@ begin
     
     -- HIST_VALUE delay process
     process (CLK) begin
-        HIST_READY <= hist_ready_int;     
+        hist_ready_int(1) <= hist_ready_int(0);
+        hist_ready_int(2) <= hist_ready_int(1);     
     end process;
     
     process (counter_delayed, douta, doutb_sig) begin
         if counter_delayed < COLLECTION_TIME then
             addra  <= douta;
             addrb  <= douta;
-            wea(0) <= counter_delayed(0);
+            wea(0) <= counter_delayed(0); -- read & write
             dina   <= doutb_sig + 1;
-            hist_ready_int <= '0';
+            hist_ready_int(0) <= '0';
         elsif counter_delayed <= PRESENTATION_TIME then
-            wea(0) <= '0';
-            -- addrb  <= counter - COLLECTION_TIME;
+            wea(0) <= '0'; -- read only
+            -- addrb  <= counter - COLLECTION_TIME; -- from 0 to 255
             addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter_delayed)) - COLLECTION_TIME), 8));
-            hist_ready_int <= '1';
+            hist_ready_int(0) <= '1';
         else
-            wea(0) <= '1';
+            wea(0) <= '1'; -- write only
             dina   <= (others => '0');
-            -- addra  <= counter - PRESENTATION_TIME;
+            -- addra  <= counter - PRESENTATION_TIME; -- from 0 to 255
             addra  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter_delayed)) - PRESENTATION_TIME), 8));
-            hist_ready_int <= '0';
+            hist_ready_int(0) <= '0';
         end if;
     end process;
 
    -- Output assignments
-
+    HIST_READY <= hist_ready_int(2);     
     HIST_VALUE   <= addrb;
     VALUE_AMOUNT <= doutb_sig;
     
