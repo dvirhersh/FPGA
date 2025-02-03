@@ -67,7 +67,6 @@ architecture Behavioral of HIST_UNIT is
     
     signal counter           : std_logic_vector (11 downto 0) := (others => '1');
     signal counter_delayed   : std_logic_vector (11 downto 0) := (others => '1');
-    signal counter_delayed_b : std_logic_vector (11 downto 0) := (others => '1');
     
     -- For ROM
     signal douta : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
@@ -80,7 +79,6 @@ architecture Behavioral of HIST_UNIT is
 
     signal addrb               : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
     signal addrb_delayed       : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
-    signal addrb_delayed_again : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
 
     signal hist_ready_int : std_logic := '0';
 
@@ -101,12 +99,10 @@ begin
     
     -- Delay process for HIST and counter
     process (CLK) begin
-        counter_delayed_b   <= counter;
-        counter_delayed     <= counter_delayed_b; 
-
-        addrb_delayed       <= addrb;      
-        addrb_delayed_again <= addrb_delayed;
-
+        if rising_edge (CLK) then
+        counter_delayed <= counter;
+        addrb_delayed   <= addrb;      
+        end if;
     end process; 
     
     -- Main control process
@@ -136,7 +132,7 @@ begin
 
    -- Output assignments
     HIST_READY   <= hist_ready_int;     
-    HIST_VALUE   <= addrb_delayed_again;
+    HIST_VALUE   <= addrb_delayed;
     VALUE_AMOUNT <= doutb;
     
     ROM : blk_mem_gen_0
