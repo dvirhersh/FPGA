@@ -66,7 +66,6 @@ architecture Behavioral of HIST_UNIT is
     END COMPONENT;
     
     signal counter           : std_logic_vector (11 downto 0) := (others => '1');
-    signal counter_delayed   : std_logic_vector (11 downto 0) := (others => '1');
     
     -- For ROM
     signal douta : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
@@ -77,13 +76,12 @@ architecture Behavioral of HIST_UNIT is
     signal dina  : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
     signal doutb : STD_LOGIC_VECTOR(9 DOWNTO 0) := (others => '0');
 
-    signal addrb               : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
-    signal addrb_delayed       : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
+    signal addrb         : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
+    signal addrb_delayed : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
 
     signal hist_ready_int : std_logic := '0';
 
 begin
-
     -- Counter process
     process (CLK) begin
         if rising_edge (CLK) then
@@ -100,32 +98,31 @@ begin
     -- Delay process for HIST and counter
     process (CLK) begin
         if rising_edge (CLK) then
-        counter_delayed <= counter;
         addrb_delayed   <= addrb;      
         end if;
     end process; 
     
     -- Main control process
-    process (counter_delayed, douta, doutb) begin
-        if counter_delayed < COLLECTION_TIME then
+    process (counter, douta, doutb) begin
+        if counter < COLLECTION_TIME then
             state <= COLLECT;
             addra  <= douta;
             addrb  <= douta;
-            wea(0) <= counter_delayed(0);
+            wea(0) <= not counter(0);
             dina   <= doutb + 1;
             hist_ready_int <= '0';
-        elsif counter_delayed <= PRESENTATION_TIME then
+        elsif counter <= PRESENTATION_TIME then
+            state <= PRESENT;
             wea(0) <= '0';
             -- addrb  <= counter - COLLECTION_TIME; -- counter 0 - 255
-            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter_delayed)) - COLLECTION_TIME), 8));
+            addrb  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - COLLECTION_TIME), 8));
             hist_ready_int <= '1';
-            state <= PRESENT;
         else
             state <= ZERO;
             wea(0) <= '1';
             dina   <= (others => '0');
             -- addra  <= counter - PRESENTATION_TIME; -- counter 0 - 255
-            addra  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter_delayed)) - PRESENTATION_TIME), 8));
+            addra  <= std_logic_vector(to_unsigned((to_integer(unsigned(counter)) - PRESENTATION_TIME), 8));
             hist_ready_int <= '0';
         end if;
     end process;
@@ -147,5 +144,4 @@ begin
                 clkb  => CLK,
                 addrb => addrb,
                 doutb => doutb);
-
 end Behavioral;
